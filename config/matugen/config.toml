@@ -1,0 +1,47 @@
+###################
+###   MATUGEN   ###
+###################
+
+
+## Config ##
+
+[config]
+version_check = false
+caching = false
+prefer = "saturation"
+
+[config.wallpaper]
+command = "awww img --all --resize crop --transition-type grow --transition-fps 60 {{ image }}"
+set = true
+
+
+## Templates ##
+
+# Hyprland
+[templates.hyprland]
+input_path = "templates/hyprland-colorscheme.conf"
+output_path = "~/.config/hypr/system/appearance/colorscheme.conf"
+post_hook = "hyprctl reload"
+
+# Waybar
+[templates.waybar]
+input_path = "templates/waybar-colors.css"
+output_path = "~/.config/waybar/colors.css"
+post_hook = "killall -SIGUSR2 waybar"
+
+# Kitty
+[templates.kitty]
+input_path = 'templates/kitty-colors.conf'
+output_path = '~/.config/kitty/colors.conf'
+post_hook = "killall -SIGUSR1 kitty"
+
+# Fuzzel
+[templates.fuzzel]
+input_path="templates/fuzzel-colors.ini"
+output_path="~/.config/fuzzel/colors.ini"
+#post_hook="killall -HUP fuzzel" # Break (;^;)
+
+#[templates.gtk3]
+#input_path = "templates/matugen-gtk.css"
+#output_path = "~/.config/gtk-3.0/gtk.css"
+#post_hook = "?"

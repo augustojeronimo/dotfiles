@@ -1,0 +1,86 @@
+@import url("./colors.css");
+
+* {
+    outline: none;
+}
+
+/* Cores para a barra de cabeçalho e título */
+headerbar {
+    background-color: @accent_color;
+    color: @fg_color;
+    border-bottom: 1px solid @border_color;
+}
+
+/* Janela principal */
+window {
+    background-color: @bg_color;
+    color: @fg_color;
+}
+
+/* Botões */
+button {
+    background-color: @button_color;
+    color: @text_color;
+    border-radius: 6px; /* Levemente arredondado para suavizar */
+    border: 1px solid @border_color;
+    padding: 6px 12px; /* Para dar mais espaço interno ao botão */
+    font-weight: bold;
+    transition: background-color 0.3s ease; /* Suavizar a transição do background */
+}
+
+button:hover {
+    background-color: @secondary_color; /* Destacar no hover */
+}
+
+/* Labels (rótulos de texto) */
+label {
+    color: @fg_color;
+    font-weight: bold;
+}
+
+/* Campos de texto (ex: input) */
+entry {
+    background-color: @bg_color;
+    color: @fg_color;
+    border: 1px solid @border_color;
+    border-radius: 4px;
+    padding: 8px; /* Aumentando o espaço interno */
+    transition: border-color 0.3s ease; /* Suavizar transições da borda */
+}
+
+entry:focus {
+    border-color: @accent_color; /* Destacar quando o campo estiver em foco */
+}
+
+/* Barra de rolagem */
+scrollbar {
+    background-color: @bg_color;
+}
+
+scrollbar slider {
+    background-color: @secondary_color;
+}
+
+/* Títulos de seções (ex: cabeçalhos de listas) */
+h1, h2, h3, h4 {
+    color: @accent_color;
+}
+
+/* Menu de contexto e listas */
+menu {
+    background-color: @bg_color;
+    color: @fg_color;
+    border: 1px solid @border_color;
+}
+
+/* Seleções */
+.selection {
+    background-color: @highlight_color;
+    color: @fg_color;
+}
+
+/* Definição para links (se usado em alguma aplicação) */
+link {
+    color: @accent_color;
+    text-decoration: none;
+}
