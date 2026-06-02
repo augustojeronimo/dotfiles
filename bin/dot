@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+set -eu
+
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+SCRIPTS_DIR="$DOTFILES/scripts"
+
+BACKGROUND=0
+FOREGROUND=0
+
+# Functions
+
+die()
+{
+    echo "dot: $*" >&2
+    exit 1
+}
+
+usage()
+{
+    echo "Usage"
+    echo "	dot [flags] <category> <action> [args...]"
+    echo
+    echo "Flags:"
+    printf "	%-14s %s\n" \
+	    "-h, --help"    "Show this help" \
+	    "-l, --list"    "List categories" \
+	    "--bg"          "Executes in backgound" \
+	    "--fg"          "Executes in foreground"
+
+    exit 0
+}
+
+get_categories()
+{
+    for dir in "$SCRIPTS_DIR"/*; do
+        [ -d "$dir" ] || continue
+
+        category="$(basename "$dir")"
+
+        [[ "$category" == _* ]] && continue
+
+        [ -n "$(get_actions "$category")" ] || continue
+
+        printf '%s\n' "$category"
+    done | sort
+}
+
+get_actions()
+{
+    category="$1"
+
+    [[ -z "$category" || ! -d "$SCRIPTS_DIR/$category" ]] && return
+
+    find "$SCRIPTS_DIR/$category" \
+        -type f -executable \
+        -name "*.sh" ! -name "_*" \
+        -exec basename {} .sh \; | sort
+}
+
+list_categories()
+{
+    echo "Available categories:"
+    get_categories | while IFS= read -r line; do
+        printf "\t%s\n" "$line"
+    done
+}
+
+list_actions()
+{
+    category="$1"
+
+    echo "Available actions for category '$category':"
+    get_actions "$category" | while IFS= read -r line; do
+        printf "\t%s\n" "$line"
+    done
+}
+
+# Autocomplete integration
+
+if [[ "${1:-}" == "__complete" ]]; then
+    case "${2:-}" in
+        categories)
+            get_categories
+            ;;
+        actions)
+            get_actions "${3:-}"
+            ;;
+    esac
+    exit 0
+fi
+
+# Flag handling
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+	--help | -h)
+	    shift
+	    usage
+            ;;
+        --list | -l)
+            list_categories
+	    exit 0
+            ;;
+	--bg)
+	    shift
+	    BACKGROUND=1
+	    ;;
+	--fg)
+	    shift
+	    FOREGROUND=1
+	    ;;
+	--)
+            shift
+            break
+            ;;
+        -*)
+            die "Unknown flag: $1"
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+# Export variables for child scripts
+
+(( FOREGROUND && BACKGROUND )) && die "you can't use --bg and --fg at the same time"
+
+if (( FOREGROUND )); then
+    unset DOT_BG
+elif (( BACKGROUND )); then
+    export DOT_BG=1
+fi
+
+################################################
+
+category="${1:-}"
+action="${2:-}"
+
+[[ -z "$category" ]] && usage
+
+if [ ! -d "$SCRIPTS_DIR/$category" ]; then
+    echo "dot: Unknown category: $category" >&2
+    echo >&2
+    list_categories >&2
+    exit 1
+fi
+
+if [[ -z "$action" ]]; then
+    list_actions "$category"
+    exit 0
+fi
+
+script="$SCRIPTS_DIR/$category/$action.sh"
+
+if [[ ! -f "$script" || ! -x "$script" ]]; then
+    echo "Unknown action: $action" >&2
+    echo >&2
+    list_actions "$category" >&2
+    exit 1
+fi
+
+shift 2
+
+
+if [[ -n "${DOT_BG:-}" ]]; then
+    setsid "$script" "$@" >/dev/null 2>&1 < /dev/null &
+else
+    exec "$script" "$@"
+fi
+

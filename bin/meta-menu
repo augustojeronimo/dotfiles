@@ -1,6 +1,0 @@
-#!/bin/bash
-
-
-# Linker to meta menu #
-exec "$XDG_CONFIG_HOME/fuzzel/scripts/meta-menu.sh"
-

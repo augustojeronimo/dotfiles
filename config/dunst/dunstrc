@@ -4,11 +4,8 @@
 
 
 # Notification daemon #
+# This configuration includes dunstrc.d/*
 
-##include colors
-##custom appearance
-##defines the operation
-
-# See dunst(5) for all configuration options
-
+[global]
+notification_limit = 5
 

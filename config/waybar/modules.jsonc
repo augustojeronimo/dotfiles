@@ -53,23 +53,26 @@
 	"interval": 1
     },
     "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon}  {format_source}",
+        "format": "{volume}% {icon}  {format_source}",
+        "format-bluetooth": "{volume}% {icon}   {format_source}",
         "format-bluetooth-muted": "  {format_source}",
-        "format-muted": " {format_source}",
+        "format-muted": "{volume}%  {format_source}",
         "format-source": "",
         "format-source-muted": "",
         "format-icons": {
             "headphone": "",
             "default": ["", "", ""]
         },
-        "on-click": "pavucontrol"
+        "smooth-scrolling-threshold": 3,
+        "on-click": "dot --bg sound volume toggle-mute",
+        "on-click-right": "dot --bg sound volume toggle-mic",
+	"on-scroll-down": "dot --bg sound volume up",
+	"on-scroll-up": "dot --bg sound volume down"
     },
     "custom/power": {
         "format" : "⏻",
 	"tooltip": false,
-	"on-click": "menu-power"
+	"on-click": "dot --bg menu power"
     },
     "tray": {
 	"icon-size": 16,

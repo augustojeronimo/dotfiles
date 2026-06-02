@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+
+die() {
+    echo "dot: $*" >&2
+    exit 1
+}
+
+
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+MODULES="$DOTFILES/runtime/apps/dot"
+
+DOT_APPS="$DOTFILES/runtime/apps"
+
+LIB_BASE="$DOTFILES/runtime/lib/base.sh"
+LIB_DOT="$DOT_APPS/dot/_lib/_dot.sh"
+
+[[ -d "$DOTFILES" ]]    || die "invalid DOTFILES"
+[[ -d "$MODULES" ]]     || die "missing modules"
+[[ -d "$MODULES" ]]     || die "missing dotfiles apps"
+[[ -f "$LIB_BASE" ]]    || die "missing base lib"
+[[ -f "$LIB_DOT" ]]     || die "missing dot lib"
+
+export DOT_APPS
+
+source "$LIB_BASE"
+source "$LIB_DOT"
+
+
+
+usage()
+{
+    echo "Usage"
+    echo "	dot [flags] <category> <action> [args...]"
+    echo
+    echo "Flags:"
+    printf "	%-14s %s\n" \
+	    "-h, --help"    "Show this help" \
+	    "-l, --list"    "List categories" \
+	    "--bg"          "Executes in backgound" \
+	    "--fg"          "Executes in foreground"
+
+    exit 0
+}
+
+list_categories()
+{
+    echo "Available categories:"
+    get_categories | while IFS= read -r line; do
+        printf "\t%s\n" "$line"
+    done
+}
+
+list_actions()
+{
+    category="$1"
+
+    echo "Available actions for category '$category':"
+    get_actions "$category" | while IFS= read -r line; do
+        printf "\t%s\n" "$line"
+    done
+}
+
+# Autocomplete integration
+
+if [[ "${1:-}" == "__complete" ]]; then
+    case "${2:-}" in
+        categories)
+            get_categories
+            ;;
+        actions)
+            get_actions "${3:-}"
+            ;;
+    esac
+    exit 0
+fi
+
+# Flag handling
+
+BACKGROUND=0
+FOREGROUND=0
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+	--help | -h)
+	    shift
+	    usage
+            ;;
+        --list | -l)
+            list_categories
+	    exit 0
+            ;;
+	--bg)
+	    shift
+	    BACKGROUND=1
+	    ;;
+	--fg)
+	    shift
+	    FOREGROUND=1
+	    ;;
+	--)
+            shift
+            break
+            ;;
+        -*)
+            die "Unknown flag: $1"
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+# Export variables for child scripts
+
+(( FOREGROUND && BACKGROUND )) && die "you can't use --bg and --fg at the same time"
+
+if (( FOREGROUND )); then
+    unset DOT_BG
+elif (( BACKGROUND )); then
+    export DOT_BG=1
+fi
+
+################################################
+
+category="${1:-}"
+action="${2:-}"
+
+[[ -z "$category" ]] && usage
+
+if [ ! -d "$MODULES/$category" ]; then
+    echo "dot: Unknown category: $category" >&2
+    echo >&2
+    list_categories >&2
+    exit 1
+fi
+
+if [[ -z "$action" ]]; then
+    list_actions "$category"
+    exit 0
+fi
+
+script="$MODULES/$category/$action.sh"
+
+if [[ ! -f "$script" || ! -x "$script" ]]; then
+    echo "Unknown action: $action" >&2
+    echo >&2
+    list_actions "$category" >&2
+    exit 1
+fi
+
+shift 2
+
+
+if [[ -n "${DOT_BG:-}" ]]; then
+    setsid "$script" "$@" >/dev/null 2>&1 < /dev/null &
+else
+    exec "$script" "$@"
+fi
+

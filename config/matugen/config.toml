@@ -19,9 +19,14 @@ set = true
 
 # Hyprland
 [templates.hyprland]
-input_path = "templates/hyprland-colorscheme.conf"
-output_path = "~/.config/hypr/system/appearance/colorscheme.conf"
-post_hook = "hyprctl reload"
+input_path = "templates/hyprland-colors.lua"
+output_path = "~/.config/hypr/wm/dynamic/colors.lua"
+
+# Dunst
+[templates.dunst]
+input_path = "templates/dunst-colors.conf"
+output_path = "~/.config/dunst/dunstrc.d/colors.conf"
+post_hook = "dunstctl reload"
 
 # Waybar
 [templates.waybar]

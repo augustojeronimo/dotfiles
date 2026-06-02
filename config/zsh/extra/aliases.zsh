@@ -39,3 +39,6 @@ alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
 
+# Clipboard #
+alias cpf="wl-copy <"
+

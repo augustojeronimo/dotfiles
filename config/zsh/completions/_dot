@@ -1,0 +1,28 @@
+#compdef dot
+
+_dot() {
+    local -a categories actions
+    local arg_count=0
+
+    for w in "${words[@]:1}"; do
+        [[ "$w" == -* ]] && continue
+        ((arg_count++))
+    done
+
+    if (( arg_count == 1 )); then
+        categories=(${(f)"$(dot __complete categories)"})
+        _describe 'category' categories
+        return
+    fi
+
+    if (( arg_count == 2 )); then
+        local category
+        for w in "${words[@]:1}"; do
+            [[ "$w" != -* ]] && { category="$w"; break; }
+        done
+
+        actions=(${(f)"$(dot __complete actions $category)"})
+        _describe 'action' actions
+        return
+    fi
+}
