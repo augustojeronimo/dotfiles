@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$DOTFILES/runtime/apps/dot/lib/_core.sh"
+source "$DOT_APPS/dot/lib/_core.sh"
 
 require playerctl
 

@@ -1,30 +1,26 @@
-##################
-###   ZSHELL   ###
-##################
+#################
+###   ZSHRC   ###
+#################
 
 
-# Appearance #
-source $ZDOTDIR/appearance/theme.zsh
-
-# Completions #
-
-fpath+=($XDG_CONFIG_HOME/zsh/completions)
-
-autoload -Uz compinit
-compinit
-
-#compdef _dot dot
+# Init XDG dirs #
+source $ZDOTDIR/config/xdg.zsh
 
 # Config #
 source $ZDOTDIR/config/options.zsh
 source $ZDOTDIR/config/zle.zsh
 source $ZDOTDIR/config/binds.zsh
+source $ZDOTDIR/config/completions.zsh
 
-# Extra #
-source $ZDOTDIR/extra/functions.zsh
-source $ZDOTDIR/extra/aliases.zsh
+# Utils #
+source $ZDOTDIR/utils/functions.zsh
+source $ZDOTDIR/utils/aliases.zsh
+source $ZDOTDIR/utils/tools.zsh
 
 # Plugin #
-source $ZDOTDIR/plugins/plugins.zsh
+source $ZDOTDIR/plugins/init.zsh
+
+# Appearance #
+source $ZDOTDIR/appearance/theme.zsh
 
 

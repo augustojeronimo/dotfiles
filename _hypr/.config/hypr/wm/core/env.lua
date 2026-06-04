@@ -8,7 +8,7 @@ local config        = os.getenv("XDG_CONFIG_HOME")
 local zsh_config    = config.."/zsh"
 
 local dot_path      = home.."/dotfiles"
-local dot_bin       = home.."/dotfiles/bin"
+local dot_bin       = dot_path.."/runtime/bin"
 local local_bin     = home.."/.local/bin"
 
 local path          = "/usr/local/bin:/usr/bin:/bin:"..local_bin..":"..dot_bin

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$DOTFILES/scripts/audio/_audio.sh"
+source "$DOT_APPS/dot/audio/_audio.sh"
 
 
 TARGET="@DEFAULT_AUDIO_SINK@"
